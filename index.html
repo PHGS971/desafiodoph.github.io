@@ -1,257 +1,182 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Desafio Arena</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(120deg, #4b6cb7, #182848);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow: hidden;
-      animation: fadeIn 2s ease-in;
-    }@keyframes fadeIn {
-  0% { opacity: 0; transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
-}
-
-.menu {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 30px;
-}
-
-.btn {
-  background-color: #ffffff10;
-  border: 2px solid white;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  border-radius: 12px;
-  cursor: pointer;
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  background-color: white;
-  color: #182848;
-}
-
-.game-area {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 40px;
-}
-
-.game-mode-select {
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.leaderboard {
-  margin-top: 30px;
-}
-
-.desafio {
-  background-color: #ffffff20;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 10px 0;
-  width: 300px;
-  text-align: center;
-}
-
-.sala-lista {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
+      text-align: center;
+    }
+    .container {
+      padding: 2rem;
+    }
+    .btn {
+      background: white;
+      color: #764ba2;
+      padding: 1rem 2rem;
+      margin: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #f0f0f0;
+    }
+    .hidden {
+      display: none;
+    }
+    input {
+      padding: 0.8rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
-  <h1>Desafio Arena</h1>
-  <div class="menu">
-    <button class="btn" onclick="criarPartida()">Criar uma Partida</button>
-    <button class="btn" onclick="entrarComCodigo()">Entrar com Código</button>
-    <button class="btn" onclick="buscarPartidasOnline()">Entrar em uma Partida Online</button>
-  </div>  <div class="game-mode-select" id="modoSelect">
-    <h3>Escolha o Modo de Jogo:</h3>
-    <button class="btn" onclick="iniciarJogo('facil')">Desafio Fácil</button>
-    <button class="btn" onclick="iniciarJogo('medio')">Desafio Médio</button>
-    <button class="btn" onclick="iniciarJogo('dificil')">Desafio Difícil</button>
-  </div>  <div class="game-area" id="jogo">
-    <h2>Jogo em Progresso...</h2>
-    <div id="desafios"></div>
-    <div class="leaderboard" id="placar"></div>
-  </div>  <div class="sala-lista" id="listaSalas" style="display:none;"></div>  <script>
-    let jogadores = [];
-    let iniciado = false;
-    let desafios = [];
-    let desafioAtual = 0;
-    let tempoInicio;
-    let nomeJogador;
-    let salas = [];
-    let salaAtual = null;
+  <div class="container">
+    <h1>🏆 Desafio Arena 🏆</h1>
+    <div id="menu">
+      <button class="btn" onclick="criarPartida()">Criar uma Partida</button>
+      <button class="btn" onclick="mostrarInputCodigo()">Entrar com Código</button>
+      <button class="btn" onclick="listarPartidasOnline()">Entrar em uma Partida Online</button>
+      <div id="inputCodigoDiv" class="hidden">
+        <input id="codigoInput" placeholder="Digite o código da partida" />
+        <br />
+        <button class="btn" onclick="entrarComCodigo()">Entrar</button>
+      </div>
+    </div>
+    <div id="jogo" class="hidden">
+      <h2 id="faseTitulo"></h2>
+      <div id="desafio"></div>
+      <input id="resposta" placeholder="Digite sua resposta" />
+      <br />
+      <button class="btn" onclick="verificarResposta()">Enviar Resposta</button>
+    </div>
+    <div id="ranking" class="hidden">
+      <h2>🏁 Ranking Final</h2>
+      <div id="rankingLista"></div>
+    </div>
+  </div>  <script>
+    const desafios = [
+      { pergunta: "Quanto é 5 + 3?", resposta: "8" },
+      { pergunta: "Qual a capital do Brasil?", resposta: "brasilia" },
+      { pergunta: "Quantos lados tem um triângulo?", resposta: "3" },
+      { pergunta: "Quanto é 10 - 4?", resposta: "6" },
+      { pergunta: "Quanto é 2 x 6?", resposta: "12" },
+      { pergunta: "Qual o oposto de quente?", resposta: "frio" },
+      { pergunta: "Qual a primeira letra do alfabeto?", resposta: "a" },
+      { pergunta: "5 + 5 = ?", resposta: "10" },
+      { pergunta: "Cor do céu em dia claro?", resposta: "azul" },
+      { pergunta: "4 x 2 = ?", resposta: "8" },
+    ];
 
-    function gerarCodigoSala() {
-      return Math.random().toString(36).substring(2, 7).toUpperCase();
+    let partida = {
+      id: '',
+      jogadores: {},
+      desafios: desafios,
+    };
+    let jogadorAtual = '';
+    let indiceDesafio = 0;
+    let inicioTempo = 0;
+
+    function gerarCodigo() {
+      return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
     function criarPartida() {
-      const codigo = gerarCodigoSala();
-      salaAtual = { codigo: codigo, jogadores: [], modo: null };
-      salas.push(salaAtual);
-      alert("Partida criada com código: " + codigo);
-      document.getElementById("modoSelect").style.display = "flex";
+      const id = gerarCodigo();
+      partida.id = id;
+      localStorage.setItem("partida_" + id, JSON.stringify(partida));
+      alert("Código da sala: " + id);
+      iniciarJogo();
+    }
+
+    function mostrarInputCodigo() {
+      document.getElementById("inputCodigoDiv").classList.remove("hidden");
     }
 
     function entrarComCodigo() {
-      let codigo = prompt("Digite o código da partida:").toUpperCase();
-      let sala = salas.find(s => s.codigo === codigo);
-      if (sala) {
-        salaAtual = sala;
-        alert("Entrou na sala " + codigo);
-        aguardarModo();
+      const codigo = document.getElementById("codigoInput").value.toUpperCase();
+      const dados = localStorage.getItem("partida_" + codigo);
+      if (dados) {
+        partida = JSON.parse(dados);
+        partida.id = codigo;
+        iniciarJogo();
       } else {
-        alert("Código inválido!");
+        alert("Partida não encontrada.");
       }
     }
 
-    function buscarPartidasOnline() {
-      const lista = document.getElementById("listaSalas");
-      lista.innerHTML = "<h3>Salas Disponíveis:</h3>";
-      if (salas.length === 0) {
-        lista.innerHTML += "<p>Nenhuma sala encontrada.</p>";
-      } else {
-        salas.forEach(sala => {
-          const btn = document.createElement("button");
-          btn.className = "btn";
-          btn.textContent = `Sala ${sala.codigo}`;
-          btn.onclick = () => {
-            salaAtual = sala;
-            alert("Entrou na sala " + sala.codigo);
-            aguardarModo();
-          };
-          lista.appendChild(btn);
-        });
+    function listarPartidasOnline() {
+      let html = "<h3>Salas Online:</h3>";
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith("partida_")) {
+          const codigo = key.replace("partida_", "");
+          html += `<button class='btn' onclick='entrarDireto("${codigo}")'>Partida ${codigo}</button><br/>`;
+        }
       }
-      lista.style.display = "flex";
+      document.getElementById("menu").innerHTML = html;
     }
 
-    function aguardarModo() {
-      document.querySelector(".menu").style.display = "none";
-      document.getElementById("modoSelect").style.display = "flex";
-    }
-
-    function iniciarJogo(modo) {
-      iniciado = true;
-      nomeJogador = prompt("Digite seu nome:");
-      document.getElementById("modoSelect").style.display = "none";
-      document.getElementById("jogo").style.display = "flex";
-      desafios = gerarDesafios(modo);
-      desafioAtual = 0;
-      tempoInicio = Date.now();
-      mostrarProximoDesafio();
-    }
-
-    function gerarDesafios(modo) {
-      const base = {
-        facil: [
-          { pergunta: "Quanto é 1 + 1?", resposta: "2" },
-          { pergunta: "Qual é a cor da grama?", resposta: "verde" },
-          { pergunta: "Quantos dias tem uma semana?", resposta: "7" },
-          { pergunta: "Qual o oposto de quente?", resposta: "frio" },
-          { pergunta: "Quanto é 5 - 3?", resposta: "2" },
-          { pergunta: "Qual o primeiro mês do ano?", resposta: "janeiro" },
-          { pergunta: "Quantas patas tem um cachorro?", resposta: "4" },
-          { pergunta: "Qual a cor do sol?", resposta: "amarelo" },
-          { pergunta: "Qual o plural de 'cão'?", resposta: "cães" },
-          { pergunta: "Qual número vem depois do 9?", resposta: "10" }
-        ],
-        medio: [
-          { pergunta: "Quanto é 12 ÷ 3?", resposta: "4" },
-          { pergunta: "Qual é a capital da Argentina?", resposta: "buenos aires" },
-          { pergunta: "Qual é o planeta mais próximo do Sol?", resposta: "mercurio" },
-          { pergunta: "Quanto é 15 + 27?", resposta: "42" },
-          { pergunta: "Escreva 'computador' ao contrário", resposta: "rodatupmoc" },
-          { pergunta: "Qual o resultado de 9 x 3?", resposta: "27" },
-          { pergunta: "Qual é o mês do Dia das Crianças?", resposta: "outubro" },
-          { pergunta: "Qual a capital da França?", resposta: "paris" },
-          { pergunta: "Quantos lados tem um triângulo?", resposta: "3" },
-          { pergunta: "Qual é o plural de lápis?", resposta: "lápis" }
-        ],
-        dificil: [
-          { pergunta: "Raiz quadrada de 169?", resposta: "13" },
-          { pergunta: "Qual é o nome do satélite natural da Terra?", resposta: "lua" },
-          { pergunta: "Quantos ossos tem o corpo humano?", resposta: "206" },
-          { pergunta: "Quanto é 13 x 7?", resposta: "91" },
-          { pergunta: "Quem escreveu 'Dom Casmurro'?", resposta: "machado de assis" },
-          { pergunta: "Qual o símbolo químico da água?", resposta: "h2o" },
-          { pergunta: "Qual é o maior planeta do sistema solar?", resposta: "jupiter" },
-          { pergunta: "Traduza 'amizade' para inglês", resposta: "friendship" },
-          { pergunta: "Quanto é 81 dividido por 9?", resposta: "9" },
-          { pergunta: "Qual continente tem mais países?", resposta: "africa" }
-        ]
-      };
-      return [...base[modo]];
-    }
-
-    function mostrarProximoDesafio() {
-      const container = document.getElementById("desafios");
-      container.innerHTML = "";
-      if (desafioAtual < desafios.length) {
-        const desafio = document.createElement("div");
-        desafio.className = "desafio";
-        desafio.innerHTML = `
-          <p>${desafios[desafioAtual].pergunta} (${desafioAtual + 1}/10)</p>
-          <input type='text' id='resposta'><br><br>
-          <button class='btn' onclick='verificarResposta()'>Enviar</button>`;
-        container.appendChild(desafio);
-      } else {
-        finalizarJogo();
+    function entrarDireto(codigo) {
+      const dados = localStorage.getItem("partida_" + codigo);
+      if (dados) {
+        partida = JSON.parse(dados);
+        partida.id = codigo;
+        iniciarJogo();
       }
+    }
+
+    function iniciarJogo() {
+      document.getElementById("menu").classList.add("hidden");
+      document.getElementById("jogo").classList.remove("hidden");
+      jogadorAtual = prompt("Digite seu nome:");
+      inicioTempo = Date.now();
+      mostrarDesafio();
+    }
+
+    function mostrarDesafio() {
+      if (indiceDesafio >= partida.desafios.length) {
+        finalizar();
+        return;
+      }
+      document.getElementById("faseTitulo").innerText = `Desafio ${indiceDesafio + 1}`;
+      document.getElementById("desafio").innerText = partida.desafios[indiceDesafio].pergunta;
+      document.getElementById("resposta").value = "";
     }
 
     function verificarResposta() {
-      const entrada = document.getElementById("resposta").value.trim().toLowerCase();
-      const correta = desafios[desafioAtual].resposta.toLowerCase();
-      if (entrada === correta) {
-        desafioAtual++;
-        mostrarProximoDesafio();
+      const resposta = document.getElementById("resposta").value.toLowerCase().trim();
+      const correta = partida.desafios[indiceDesafio].resposta;
+      if (resposta === correta) {
+        indiceDesafio++;
+        mostrarDesafio();
       } else {
         alert("Resposta incorreta! Tente novamente.");
       }
     }
 
-    function finalizarJogo() {
-      const tempoFinal = Math.floor((Date.now() - tempoInicio) / 1000);
-      jogadores.push({ nome: nomeJogador, tempo: tempoFinal });
-      jogadores.sort((a, b) => a.tempo - b.tempo);
-      atualizarPlacar();
-      document.getElementById("desafios").innerHTML = `<h3>Você terminou em ${tempoFinal}s!</h3>`;
-    }
+    function finalizar() {
+      const tempo = Math.floor((Date.now() - inicioTempo) / 1000);
+      partida.jogadores[jogadorAtual] = tempo;
+      localStorage.setItem("partida_" + partida.id, JSON.stringify(partida));
 
-    function atualizarPlacar() {
-      const placar = document.getElementById("placar");
-      placar.innerHTML = "<h3>Placar:</h3>" + jogadores.map((j, i) => `<p>${i+1}º - ${j.nome} (${j.tempo}s)</p>`).join("");
+      document.getElementById("jogo").classList.add("hidden");
+      document.getElementById("ranking").classList.remove("hidden");
+
+      const jogadoresOrdenados = Object.entries(partida.jogadores).sort((a, b) => a[1] - b[1]);
+      document.getElementById("rankingLista").innerHTML = jogadoresOrdenados.map(([nome, tempo], index) => {
+        return `<p>${index + 1}º - ${nome}: ${tempo}s</p>`;
+      }).join("");
     }
   </script></body>
 </html>
