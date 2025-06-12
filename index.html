@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bateu Molhou</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Bateu Molhou</h1>
+    <div id="menu">
+      <button onclick="criarSala()">Criar Sala</button>
+      <input id="codigoSala" placeholder="Código da Sala">
+      <button onclick="entrarNaSala()">Entrar com Código</button>
+      <button onclick="buscarPartidaOnline()">Entrar Online</button>
+    </div>
+    <div id="jogo" style="display:none;">
+      <h2 id="faseAtual"></h2>
+      <div id="desafio"></div>
+      <input id="resposta" placeholder="Digite sua resposta">
+      <button onclick="enviarResposta()">Enviar</button>
+      <p id="feedback"></p>
+    </div>
+    <div id="ranking" style="display:none;">
+      <h2>Ranking Final</h2>
+      <ul id="rankingLista"></ul>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
