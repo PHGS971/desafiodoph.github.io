@@ -175,50 +175,43 @@ h1 {
     function gerarDesafios(modo) {
       const base = {
         facil: [
-          { pergunta: "Quanto é 2 + 2?", resposta: "4" },
-          { pergunta: "Qual é a cor do céu?", resposta: "azul" },
-          { pergunta: "Escreva 'gato' ao contrário", resposta: "otag" }
-          { pergunta: "Quanto é 10 - 7?", resposta: "3" },
-{ pergunta: "Qual é o nome do nosso planeta?", resposta: "Terra" },
-{ pergunta: "Escreva 'amor' ao contrário", resposta: "roma" },
-{ pergunta: "Quantos dias há em uma semana?", resposta: "7" },
-{ pergunta: "Qual é o resultado de 3 x 3?", resposta: "9" },
-{ pergunta: "Qual é a primeira letra do alfabeto?", resposta: "A" },
-{ pergunta: "Escreva 'sol' ao contrário", resposta: "los" }
+          { pergunta: "Quanto é 1 + 1?", resposta: "2" },
+          { pergunta: "Qual é a cor da grama?", resposta: "verde" },
+          { pergunta: "Quantos dias tem uma semana?", resposta: "7" },
+          { pergunta: "Qual o oposto de quente?", resposta: "frio" },
+          { pergunta: "Quanto é 5 - 3?", resposta: "2" },
+          { pergunta: "Qual o primeiro mês do ano?", resposta: "janeiro" },
+          { pergunta: "Quantas patas tem um cachorro?", resposta: "4" },
+          { pergunta: "Qual a cor do sol?", resposta: "amarelo" },
+          { pergunta: "Qual o plural de 'cão'?", resposta: "cães" },
+          { pergunta: "Qual número vem depois do 9?", resposta: "10" }
         ],
         medio: [
-          { pergunta: "Resolva: 5 x 4 - 3", resposta: "17" },
-          { pergunta: "Quantos segundos tem 1 minuto?", resposta: "60" },
-          { pergunta: "Qual é a capital do Brasil?", resposta: "brasilia" }
-          { pergunta: "Resolva: 6 + 7 x 2", resposta: "20" },
-{ pergunta: "Resolva: 8 x 3 - 5", resposta: "19" },
-{ pergunta: "Resolva: 12 / 4 + 6", resposta: "9" },
-{ pergunta: "Resolva: (3 + 5) x 2", resposta: "16" },
-{ pergunta: "Resolva: 18 - 4 x 2", resposta: "10" },
-{ pergunta: "Resolva: (10 - 2) / 2", resposta: "4" },
-{ pergunta: "Resolva: 7 + 6 - 3", resposta: "10" }
+          { pergunta: "Quanto é 12 ÷ 3?", resposta: "4" },
+          { pergunta: "Qual é a capital da Argentina?", resposta: "buenos aires" },
+          { pergunta: "Qual é o planeta mais próximo do Sol?", resposta: "mercurio" },
+          { pergunta: "Quanto é 15 + 27?", resposta: "42" },
+          { pergunta: "Escreva 'computador' ao contrário", resposta: "rodatupmoc" },
+          { pergunta: "Qual o resultado de 9 x 3?", resposta: "27" },
+          { pergunta: "Qual é o mês do Dia das Crianças?", resposta: "outubro" },
+          { pergunta: "Qual a capital da França?", resposta: "paris" },
+          { pergunta: "Quantos lados tem um triângulo?", resposta: "3" },
+          { pergunta: "Qual é o plural de lápis?", resposta: "lápis" }
         ],
         dificil: [
-          { pergunta: "Raiz quadrada de 144?", resposta: "12" },
-          { pergunta: "Qual o nome do 5º planeta?", resposta: "jupiter" },
-          { pergunta: "Traduza 'desafio' para inglês", resposta: "challenge" }
-          { pergunta: "como se faz um site?", resposta: "em html" },
-               { pergunta: "quem é o criador do site?", resposta: "PHGS" },
-                    { pergunta: "Quem é o inteligente do 5°b?", resposta: "pedro arthur" },
-                         { pergunta: "plataforma de matematica?", resposta: "marific" },
-                              { pergunta: "(3) o 5°b é um chaos?", resposta: "sim!" },
-                                   { pergunta: "(2) quem é o melhores amigos do PHGS?", resposta: "alexon sena torres joao" },
-                                        { pergunta: "(1)Raiz quadrada de 144?", resposta: "12" },
+          { pergunta: "Raiz quadrada de 169?", resposta: "13" },
+          { pergunta: "Qual é o nome do satélite natural da Terra?", resposta: "lua" },
+          { pergunta: "Quantos ossos tem o corpo humano?", resposta: "206" },
+          { pergunta: "Quanto é 13 x 7?", resposta: "91" },
+          { pergunta: "Quem escreveu 'Dom Casmurro'?", resposta: "machado de assis" },
+          { pergunta: "Qual o símbolo químico da água?", resposta: "h2o" },
+          { pergunta: "Qual é o maior planeta do sistema solar?", resposta: "jupiter" },
+          { pergunta: "Traduza 'amizade' para inglês", resposta: "friendship" },
+          { pergunta: "Quanto é 81 dividido por 9?", resposta: "9" },
+          { pergunta: "Qual continente tem mais países?", resposta: "africa" }
         ]
       };
-
-      let lista = [];
-      const arr = base[modo];
-      for (let i = 0; i < 10; i++) {
-        const desafio = arr[i % arr.length];
-        lista.push({ pergunta: `${desafio.pergunta} (${i + 1}/10)`, resposta: desafio.resposta });
-      }
-      return lista;
+      return [...base[modo]];
     }
 
     function mostrarProximoDesafio() {
@@ -228,7 +221,7 @@ h1 {
         const desafio = document.createElement("div");
         desafio.className = "desafio";
         desafio.innerHTML = `
-          <p>${desafios[desafioAtual].pergunta}</p>
+          <p>${desafios[desafioAtual].pergunta} (${desafioAtual + 1}/10)</p>
           <input type='text' id='resposta'><br><br>
           <button class='btn' onclick='verificarResposta()'>Enviar</button>`;
         container.appendChild(desafio);
@@ -240,7 +233,6 @@ h1 {
     function verificarResposta() {
       const entrada = document.getElementById("resposta").value.trim().toLowerCase();
       const correta = desafios[desafioAtual].resposta.toLowerCase();
-
       if (entrada === correta) {
         desafioAtual++;
         mostrarProximoDesafio();
