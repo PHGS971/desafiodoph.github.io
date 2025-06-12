@@ -1,35 +1,87 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bateu Molhou</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PML Executor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    input, button {
+      margin: 5px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .container {
+      background: #2c2c2c;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+    }
+  </style>
 </head>
 <body>
+  <h1>PML Executor</h1>
   <div class="container">
-    <h1>Bateu Molhou</h1>
-    <div id="menu">
-      <button onclick="criarSala()">Criar Sala</button>
-      <input id="codigoSala" placeholder="Código da Sala">
-      <button onclick="entrarNaSala()">Entrar com Código</button>
-      <button onclick="buscarPartidaOnline()">Entrar Online</button>
-    </div>
-    <div id="jogo" style="display:none;">
-      <h2 id="faseAtual"></h2>
-      <div id="desafio"></div>
-      <input id="resposta" placeholder="Digite sua resposta">
-      <button onclick="enviarResposta()">Enviar</button>
-      <p id="feedback"></p>
-    </div>
-    <div id="ranking" style="display:none;">
-      <h2>Ranking Final</h2>
-      <ul id="rankingLista"></ul>
-    </div>
+    <input type="text" id="codigoSala" placeholder="Código da sala" />
+    <br />
+    <button onclick="criarSala()">Criar Sala</button>
+    <button onclick="entrarSala()">Entrar na Sala</button>
+    <p id="status"></p>
   </div>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
-  <script src="script.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA3OnZGxbxAkP8v2tgbtfTSJ6rU5Vpn8VU",
+      authDomain: "bateumolhou.firebaseapp.com",
+      databaseURL: "https://bateumolhou-default-rtdb.firebaseio.com",
+      projectId: "bateumolhou",
+      storageBucket: "bateumolhou.firebasestorage.app",
+      messagingSenderId: "5584868306",
+      appId: "1:5584868306:web:0e9c5607fae01c22282e0b",
+      measurementId: "G-8Z9QPXPKBS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.criarSala = async () => {
+      const codigo = document.getElementById('codigoSala').value.trim();
+      if (!codigo) {
+        alert('Digite um código!');
+        return;
+      }
+      await set(ref(db, "salas/" + codigo), {
+        criadaEm: new Date().toISOString(),
+        jogadores: []
+      });
+      document.getElementById("status").textContent = `Sala ${codigo} criada com sucesso!`;
+    };
+
+    window.entrarSala = async () => {
+      const codigo = document.getElementById('codigoSala').value.trim();
+      if (!codigo) {
+        alert('Digite um código!');
+        return;
+      }
+      const snapshot = await get(child(ref(db), "salas/" + codigo));
+      if (snapshot.exists()) {
+        document.getElementById("status").textContent = `Entrou na sala ${codigo}`;
+      } else {
+        document.getElementById("status").textContent = `Sala ${codigo} não existe.`;
+      }
+    };
+  </script>
 </body>
 </html>
